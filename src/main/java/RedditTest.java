@@ -8,7 +8,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.awt.*;
 import java.lang.*;
+import java.util.List;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 
@@ -26,6 +28,26 @@ public class RedditTest {
 
         driver.get("https://reddit.com");
         logIn(driver,userName,password);
+        CharSequence titleOfPost = new String("Hello Post ");
+        CharSequence post = new String("Hello every one we are computer engineering students...");
+        verifyCreatingPost(driver, titleOfPost, post);
+        //get background color
+//        WebDriverWait wait = new WebDriverWait(driver,20);
+//        String backGroundColor = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]")).getCssValue("color");
+//        System.out.println("backGroundColor "+ backGroundColor);
+//        WebElement dropDownBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/header[1]/div[1]/div[2]/div[2]/div[1]/div[2]/button[1]/span[1]")));
+//        dropDownBtn.click();
+//        sleep(2000);
+//        List<WebElement> nightModeBtn = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("_2KotRmn9DgdA58Ikji2mnV _1zZ3VDhRC38fXLLvVCHOwK")));
+//        nightModeBtn.get(0).click();
+//        sleep(7000);
+//        backGroundColor = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]")).getCssValue("color");
+//        System.out.println("backGroundColor after "+ backGroundColor);
+//
+//        if(backGroundColor.equals("rgba(255, 255, 255, 1)")){
+//            System.out.println("Verify Night mode functionality");
+//        }
+
 
     }
 
@@ -33,24 +55,57 @@ public class RedditTest {
     private static void logIn(WebDriver driver, CharSequence userName, CharSequence password){
         String originalWindow = driver.getWindowHandle();
         driver.findElement(By.xpath("//a[contains(text(),'Log In')]")).click();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sleep(5000);
         WebElement iframeElement = driver.findElement(By.xpath("//body/div[@id='2x-container']/div[1]/div[2]/div[3]/div[2]/div[1]/iframe[1]"));
         driver.switchTo().frame(iframeElement);
         driver.findElement(By.xpath("/html[1]/body[1]/div[1]/main[1]/div[1]/div[1]/div[2]/form[1]/fieldset[1]/input[1]")).sendKeys(userName);
         driver.findElement(By.xpath("/html[1]/body[1]/div[1]/main[1]/div[1]/div[1]/div[2]/form[1]/fieldset[2]/input[1]")).sendKeys(password +""+ Keys.ENTER);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sleep(5000);
         String actualUserName =  driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/header[1]/div[1]/div[2]/div[2]/div[1]/div[2]/button[1]/span[1]/span[1]/span[1]/span[1]")).getText();
 
         if(actualUserName.equals(userName.toString()))
             System.out.println("Log in verified");
+    }
+    private static  void verifyCreatingPost(WebDriver driver, CharSequence titleOfPost, CharSequence post){
+        // click on create post
+        driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]/div[1]/div[1]/input[1]")).click();
+        sleep(5000);
+        driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/input[1]")).sendKeys("u/ashrafhaitham");
+        // create a post and
+        //set post title
+        driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]/div[1]/div[2]/div[3]/div[2]/div[1]/div[1]/textarea[1]")).sendKeys(titleOfPost);
+        // set post words
+        sleep(2000);
+        driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]/div[1]/div[2]/div[3]/div[2]/div[2]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]")).sendKeys(post);
+        // click on post button
+        driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]/div[1]/div[2]/div[3]/div[3]/div[2]/div[1]/div[1]/button[1]")).click();
+
+        sleep(2000);
+        // go to profile and check if post has posted
+
+        driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/header[1]/div[1]/div[2]/div[2]/div[1]/div[2]/button[1]/span[1]")).click();
+        sleep(2000);
+        WebDriverWait wait = new WebDriverWait(driver,10);
+        WebElement profileBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html[1]/body[1]/div[5]/div[1]/a[1]")));
+        profileBtn.click();
+        //get title
+        WebElement tilteElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/div[1]/div[5]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/div[2]/div[1]/a[1]/div[1]/h3[1]")));
+        String actualTitleOfPost = tilteElement.getText();
+        // get post
+        WebElement postElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/div[1]/div[5]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/div[3]/div[1]/div[1]/p[1]")));
+        String actualPost = postElement.getText();
+//        System.out.println("title" + actualTitleOfPost);
+//        System.out.println("post" + actualPost);
+        if(actualTitleOfPost.equals(titleOfPost.toString().trim()) && actualPost.equals(post.toString().trim())){
+            System.out.println("Create a post verified");
+        }
+    }
+    private static void sleep(long duration){
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
