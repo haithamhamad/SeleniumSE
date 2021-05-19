@@ -28,9 +28,11 @@ public class RedditTest {
 
         driver.get("https://reddit.com");
         logIn(driver,userName,password);
+
         CharSequence titleOfPost = new String("Hello Post ");
         CharSequence post = new String("Hello every one we are computer engineering students...");
         verifyCreatingPost(driver, titleOfPost, post);
+        verifyGoingToNotification(driver);
         //get background color
 //        WebDriverWait wait = new WebDriverWait(driver,20);
 //        String backGroundColor = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[3]")).getCssValue("color");
@@ -99,6 +101,20 @@ public class RedditTest {
         if(actualTitleOfPost.equals(titleOfPost.toString().trim()) && actualPost.equals(post.toString().trim())){
             System.out.println("Create a post verified");
         }
+    }
+
+    private static void verifyGoingToNotification(WebDriver driver){
+        sleep(3000);
+        WebDriverWait wait = new WebDriverWait(driver,20);
+        WebElement menuBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/header[1]/div[1]/div[1]/div[2]/button[1]")));
+        menuBtn.click();
+        sleep(3000);
+        WebElement notificationBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/header[1]/div[1]/div[1]/div[2]/div[1]/a[5]")));
+        notificationBtn.click();
+        WebElement notificationHeadText = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/h1[1]")));
+        String actualNotifyText = notificationHeadText.getText();
+        if(actualNotifyText.equals("Notifications"))
+            System.out.println("Go to notification verified");
     }
     private static void sleep(long duration){
         try {
